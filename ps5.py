@@ -334,10 +334,9 @@ def gen_std_devs(climate, multi_cities, years):
 
     for y in range(len(years)):
         for c in multi_cities:
-            daily_temp = pylab.append(daily_temp, climate.get_yearly_temp(c, y))
-        for i in range(len(daily_temp)):
-            for j in range(len(daily_temp[i])):
-                daily_temp_sum += 
+            daily_temp = pylab.append(daily_temp, climate.get_yearly_temp(c, years[y]))
+        for i in daily_temp:
+            daily_temp_sum += i
         daily_avg = daily_temp_sum/len(multi_cities)
         daily_avg_list = pylab.append(daily_avg_list, daily_avg)
         daily_temp_sum = 0
@@ -348,7 +347,7 @@ def gen_std_devs(climate, multi_cities, years):
 
     return std_list
 
-        for y in range(len(years)):
+    for y in range(len(years)):
         for m in months:
             for d in days:
                 for c in multi_cities:
