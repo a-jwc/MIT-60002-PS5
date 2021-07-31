@@ -322,37 +322,19 @@ def gen_std_devs(climate, multi_cities, years):
         city temperatures for the given cities in a given year.
     """
     std_list = pylab.array([])
-    avg_yc = 0
     months = range(1,13)
-    days = range(1,31)
-    daily_temp = pylab.array([])
-    yearly_temp = pylab.array([])
+    days = range(1,32)
+    daily_temp = 0.0
     daily_temp_sum = 0.0
     daily_avg = 0.0
     daily_avg_list = pylab.array([])
     cities_avg = gen_cities_avg(climate, multi_cities, years)
     agg_dif = 0.0
 
-    # for y in range(len(years)):
-    #     for c in multi_cities:
-    #         yearly_temp = pylab.append(yearly_temp, climate.get_yearly_temp(c, years[y]))
-    #     for t in yearly_temp:
-            
-    #     daily_avg = daily_temp_sum/len(multi_cities)
-    #     daily_avg_list = pylab.append(daily_avg_list, daily_avg)
-    #     daily_temp_sum = 0
-    #     for i in daily_avg_list:
-    #         xd = (i - cities_avg[y])**2
-    #         agg_dif += xd
-    #     std_list = pylab.append(std_list, float(math.sqrt(agg_dif/len(i))))
-
-    # return std_list
-
     for y in range(len(years)):
         for m in months:
             for d in days:
-                if not ((m % 2 == 0 and d > 30) or (m == 2 and d > 28)):
-                    # break
+                if (m % 2 == 0 and d < 31 and not m == 2) or (m == 2 and d < 29) or (m % 2 == 1 and m < 8) or ((m == 9 or m == 11) and d < 31) or (m % 2 == 0 and m > 7) or (m == 2 and d < 30 and years[y] % 4 == 0):
                     for c in multi_cities:
                         daily_temp = climate.get_daily_temp(c, m, d, years[y])
                         daily_temp_sum += daily_temp
@@ -364,6 +346,7 @@ def gen_std_devs(climate, multi_cities, years):
             agg_dif += xd
         std_list = pylab.append(std_list, float(math.sqrt(agg_dif/len(daily_avg_list))))
         agg_dif = 0
+        daily_avg_list = pylab.array([])
     
     return std_list
 
