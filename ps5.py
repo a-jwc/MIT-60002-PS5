@@ -326,40 +326,46 @@ def gen_std_devs(climate, multi_cities, years):
     months = range(1,13)
     days = range(1,31)
     daily_temp = pylab.array([])
-    daily_temp_sum = 0
-    daily_avg = 0
+    yearly_temp = pylab.array([])
+    daily_temp_sum = 0.0
+    daily_avg = 0.0
     daily_avg_list = pylab.array([])
     cities_avg = gen_cities_avg(climate, multi_cities, years)
-    agg_dif = 0
+    agg_dif = 0.0
 
-    for y in range(len(years)):
-        for c in multi_cities:
-            daily_temp = pylab.append(daily_temp, climate.get_yearly_temp(c, years[y]))
-        for i in daily_temp:
-            daily_temp_sum += i
-        daily_avg = daily_temp_sum/len(multi_cities)
-        daily_avg_list = pylab.append(daily_avg_list, daily_avg)
-        daily_temp_sum = 0
-        for i in daily_avg_list:
-            xd = (i - cities_avg[y])**2
-            agg_dif += xd
-        std_list = pylab.append(std_list, float(math.sqrt(agg_dif/len(i))))
+    # for y in range(len(years)):
+    #     for c in multi_cities:
+    #         yearly_temp = pylab.append(yearly_temp, climate.get_yearly_temp(c, years[y]))
+    #     for t in yearly_temp:
+            
+    #     daily_avg = daily_temp_sum/len(multi_cities)
+    #     daily_avg_list = pylab.append(daily_avg_list, daily_avg)
+    #     daily_temp_sum = 0
+    #     for i in daily_avg_list:
+    #         xd = (i - cities_avg[y])**2
+    #         agg_dif += xd
+    #     std_list = pylab.append(std_list, float(math.sqrt(agg_dif/len(i))))
 
-    return std_list
+    # return std_list
 
     for y in range(len(years)):
         for m in months:
             for d in days:
-                for c in multi_cities:
-                    daily_temp = climate.get_daily_temp(c, m, d, years[y])
-                    daily_temp_sum += daily_temp
-                daily_avg = daily_temp_sum/len(multi_cities)
-                daily_avg_list = pylab.append(daily_avg_list, daily_avg)
-                daily_temp_sum = 0
+                if not ((m % 2 == 0 and d > 30) or (m == 2 and d > 28)):
+                    # break
+                    for c in multi_cities:
+                        daily_temp = climate.get_daily_temp(c, m, d, years[y])
+                        daily_temp_sum += daily_temp
+                    daily_avg = float(daily_temp_sum/len(multi_cities))
+                    daily_avg_list = pylab.append(daily_avg_list, daily_avg)
+                    daily_temp_sum = 0.0
         for i in daily_avg_list:
-            xd = (i - cities_avg[y])**2
+            xd = float((i - cities_avg[y])**2)
             agg_dif += xd
-        std_list = pylab.append(std_list, float(math.sqrt(agg_dif/len(i))))
+        std_list = pylab.append(std_list, float(math.sqrt(agg_dif/len(daily_avg_list))))
+        agg_dif = 0
+    
+    return std_list
 
 def evaluate_models_on_testing(x, y, models):
     """
